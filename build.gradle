@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace = "org.opencv"
+    compileSdk 36
+
+    buildFeatures {
+        buildConfig = true
+        aidl = true
+    }
+
+    defaultConfig {
+        minSdk 24
+        targetSdk 36
+        versionCode 4080
+        versionName "4.8.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['native/libs']
+            aidl.srcDirs = ['java/src']
+            res.srcDirs = ['java/res']
+            manifest.srcFile 'java/AndroidManifest.xml'
+
+            java {
+                srcDirs = ['java/src']
+                exclude '**/engine/**'
+            }
+        }
+    }
+}

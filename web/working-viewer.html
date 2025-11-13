@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Detection Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .canvas-container {
+            background: black;
+            border: 3px solid #00ff88;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 480px;
+        }
+
+        #imageCanvas {
+            max-width: 100%;
+            max-height: 480px;
+            border-radius: 4px;
+        }
+
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00ff88;
+        }
+
+        .stats-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-family: monospace;
+        }
+
+        .upload-section {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border: 2px dashed #00ff88;
+        }
+
+        .upload-section h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        #fileInput {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .instructions h4 {
+            color: #00ff88;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Edge Detection Viewer</h1>
+
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="imageCanvas" width="640" height="480"></canvas>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stats-title">📊 Live Statistics</div>
+                <div id="statsDisplay">
+                    <div class="stat-item">
+                        <span class="stat-label">📊 Resolution:</span>
+                        <span class="stat-value">640x480</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🎯 FPS:</span>
+                        <span class="stat-value">30 FPS</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🔧 Mode:</span>
+                        <span class="stat-value">Edge Detection Sample</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h3>📁 Upload Sample Image</h3>
+            <input type="file" id="fileInput" accept="image/*">
+            <p>Upload an edge-detected image to view it here</p>
+        </div>
+
+        <div class="instructions">
+            <h4>📋 Usage Instructions</h4>
+            <p><strong>Default View:</strong> Shows a sample edge detection output</p>
+            <p><strong>File Upload:</strong> Click "Choose File" to upload your own edge detection result</p>
+            <p><strong>Android Integration:</strong> This viewer can be embedded in Android WebView for live updates</p>
+            <p><strong>Live Stats:</strong> Resolution, FPS, and processing mode are displayed in real-time</p>
+        </div>
+    </div>
+
+    <script>
+        // Simple JavaScript implementation for immediate functionality
+        class EdgeDetectionViewer {
+            constructor() {
+                this.canvas = document.getElementById('imageCanvas');
+                this.context = this.canvas.getContext('2d');
+                this.statsDisplay = document.getElementById('statsDisplay');
+                this.fileInput = document.getElementById('fileInput');
+
+                this.stats = {
+                    resolution: '640x480',
+                    fps: '30 FPS',
+                    mode: 'Edge Detection Sample'
+                };
+
+                this.setupEventListeners();
+                this.loadDefaultSample();
+                console.log('EdgeDetectionViewer initialized successfully');
+            }
+
+            setupEventListeners() {
+                this.fileInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        this.loadImageFromFile(file);
+                    }
+                });
+            }
+
+            loadDefaultSample() {
+                // Create a sample edge detection visualization
+                this.context.fillStyle = 'black';
+                this.context.fillRect(0, 0, 640, 480);
+
+                // Draw white edges to simulate edge detection
+                this.context.strokeStyle = 'white';
+                this.context.lineWidth = 2;
+
+                // Draw some sample edges
+                this.context.beginPath();
+                this.context.rect(50, 50, 540, 380);
+                this.context.stroke();
+
+                this.context.beginPath();
+                this.context.arc(320, 240, 100, 0, Math.PI * 2);
+                this.context.stroke();
+
+                this.context.beginPath();
+                this.context.moveTo(150, 150);
+                this.context.lineTo(490, 330);
+                this.context.stroke();
+
+                // Draw triangle
+                this.context.beginPath();
+                this.context.moveTo(320, 100);
+                this.context.lineTo(370, 200);
+                this.context.lineTo(270, 200);
+                this.context.closePath();
+                this.context.stroke();
+
+                // Add text
+                this.context.fillStyle = 'white';
+                this.context.font = '16px Arial';
+                this.context.textAlign = 'center';
+                this.context.fillText('Sample Edge Detection Output (640x480)', 320, 450);
+            }
+
+            loadImageFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Clear canvas
+                        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                        // Draw uploaded image
+                        this.canvas.width = img.width;
+                        this.canvas.height = img.height;
+                        this.context.drawImage(img, 0, 0);
+
+                        // Update stats
+                        this.stats.resolution = `${img.width}x${img.height}`;
+                        this.stats.mode = 'Uploaded Image';
+                        this.updateStatsDisplay();
+
+                        console.log(`Loaded image: ${file.name} (${img.width}x${img.height})`);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            updateStatsDisplay() {
+                this.statsDisplay.innerHTML = `
+                    <div class="stat-item">
+                        <span class="stat-label">📊 Resolution:</span>
+                        <span class="stat-value">${this.stats.resolution}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🎯 FPS:</span>
+                        <span class="stat-value">${this.stats.fps}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">🔧 Mode:</span>
+                        <span class="stat-value">${this.stats.mode}</span>
+                    </div>
+                `;
+            }
+
+            // API methods for Android integration
+            updateFrameFromBase64(base64Data) {
+                const img = new Image();
+                img.onload = () => {
+                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.context.drawImage(img, 0, 0);
+                    this.stats.mode = 'Live Edge Detection';
+                    this.updateStatsDisplay();
+                };
+                img.src = base64Data;
+            }
+
+            updateStats(newStats) {
+                this.stats = { ...this.stats, ...newStats };
+                this.updateStatsDisplay();
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const viewer = new EdgeDetectionViewer();
+            window.edgeDetectionViewer = viewer; // Make globally accessible
+            console.log('EdgeDetectionViewer ready for use');
+        });
+    </script>
+</body>
+</html>

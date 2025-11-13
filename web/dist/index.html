@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edge Detection Viewer</title>
+    <style>
+        /* STEP 7.5: Add styling - responsive layout */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* STEP 7.2: Canvas element with styling */
+        .canvas-container {
+            background: black;
+            border: 3px solid #00ff88;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 480px;
+        }
+
+        #imageCanvas {
+            max-width: 100%;
+            max-height: 480px;
+            border-radius: 4px;
+        }
+
+        /* STEP 7.2: Stats display styling */
+        .stats-panel {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #00ff88;
+        }
+
+        .stats-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-family: monospace;
+        }
+
+        /* STEP 7.2: File upload styling */
+        .upload-section {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border: 2px dashed #00ff88;
+        }
+
+        .upload-section h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        #fileInput {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .instructions h4 {
+            color: #00ff88;
+            margin-top: 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Edge Detection Viewer</h1>
+
+        <div class="main-content">
+            <!-- STEP 7.2: Canvas element for displaying frame -->
+            <div class="canvas-container">
+                <canvas id="imageCanvas" width="640" height="480"></canvas>
+            </div>
+
+            <!-- STEP 7.2: Stats display -->
+            <div class="stats-panel">
+                <div class="stats-title">📊 Live Statistics</div>
+                <div id="statsDisplay">
+                    <!-- Stats will be populated by TypeScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 7.2: File upload section -->
+        <div class="upload-section">
+            <h3>📁 Upload Sample Image</h3>
+            <input type="file" id="fileInput" accept="image/*">
+            <p>Upload an edge-detected image to view it here</p>
+        </div>
+
+        <!-- Usage instructions -->
+        <div class="instructions">
+            <h4>📋 Usage Instructions</h4>
+            <p><strong>Default View:</strong> Shows a sample edge detection output</p>
+            <p><strong>File Upload:</strong> Click "Choose File" to upload your own edge detection result</p>
+            <p><strong>Android Integration:</strong> This viewer can be embedded in Android WebView for live updates</p>
+            <p><strong>Live Stats:</strong> Resolution, FPS, and processing mode are displayed in real-time</p>
+        </div>
+    </div>
+
+    <!-- FIXED: Include the compiled JavaScript -->
+    <script src="index.js"></script>
+</body>
+</html>
